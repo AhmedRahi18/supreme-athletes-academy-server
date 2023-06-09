@@ -31,6 +31,11 @@ async function run() {
         const result = await classCollection.find().toArray()
         res.send(result)
     })
+
+    app.get('/approved',async(req,res)=>{
+        const result = await classCollection.find({status:"Approved"}).toArray()
+        res.send(result)
+    })
     
     app.get('/topClasses',async(req,res)=>{
         const result = await classCollection.find({}).limit(6).sort({enrolled: -1}).toArray()
@@ -38,7 +43,6 @@ async function run() {
     })
 
     // all Instructors 
-
     app.get('/instructors', async (req, res) => {
         try {
           const instructors = await classCollection.aggregate([
