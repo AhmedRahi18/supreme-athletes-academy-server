@@ -28,7 +28,12 @@ async function run() {
     const classCollection = client.db('academy').collection('classes')
 
     app.get('/classes',async(req,res)=>{
-        const result = await classCollection.find({}).sort({enrolled: -1}).toArray()
+        const result = await classCollection.find().toArray()
+        res.send(result)
+    })
+    
+    app.get('/topClasses',async(req,res)=>{
+        const result = await classCollection.find({}).limit(6).sort({enrolled: -1}).toArray()
         res.send(result)
     })
 
