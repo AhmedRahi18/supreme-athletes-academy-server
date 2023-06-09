@@ -37,7 +37,29 @@ async function run() {
         res.send(result)
     })
 
+    // all Instructors 
 
+    app.get('/instructors', async (req, res) => {
+        try {
+          const instructors = await classCollection.aggregate([
+            {
+              $group: {
+                _id: "$instructorEmail",
+                instructor: { $first: "$$ROOT" }
+              }
+            },
+            {
+              $replaceRoot: { newRoot: "$instructor" }
+            }
+          ]).toArray();
+      
+          res.send(instructors);
+        } catch (error) {
+          console.error(error);
+          res.status(500).send("Internal Server Error");
+        }
+      });
+      
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
