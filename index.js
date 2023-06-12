@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
     
     const classCollection = client.db('academy').collection('classes')
+    const myClassCollection = client.db('academy').collection('myClasses')
 
     app.get('/classes',async(req,res)=>{
         const result = await classCollection.find().toArray()
@@ -41,6 +42,16 @@ async function run() {
         const result = await classCollection.find({}).limit(6).sort({enrolled: -1}).toArray()
         res.send(result)
     })
+
+    app.post('/myClasses', async (req, res) => {
+      const query = req.body;
+      const existingRecord = await myClassCollection.findOne({ email: query.email, name: query.name });
+      if (existingRecord) {
+        return res.status(400).json({ error: 'Email and name already exist.' });
+      }
+      const result = await myClassCollection.insertOne(query);
+      res.send(result);
+    });
 
     // all Instructors 
     app.get('/instructors', async (req, res) => {
