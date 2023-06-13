@@ -27,6 +27,26 @@ async function run() {
     
     const classCollection = client.db('academy').collection('classes')
     const myClassCollection = client.db('academy').collection('myClasses')
+    const usersCollection = client.db('academy').collection('users')
+
+
+    app.get('/users',async(req,res)=>{
+      const result = await usersCollection.find().toArray();
+      res.send(result)
+    });
+
+    app.post('/users',async(req,res)=>{
+      const user = req.body;
+      user.role = 'student';
+      const query = {email: user.email}
+      const existingUser = await usersCollection.findOne(query)
+      if(existingUser){
+        return res.send({message: 'user already exists'})
+      }
+      const result = await usersCollection.insertOne(user);
+      res.send(result)
+    })
+
 
     app.get('/classes',async(req,res)=>{
         const result = await classCollection.find().toArray()
