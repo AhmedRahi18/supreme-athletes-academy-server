@@ -34,6 +34,19 @@ async function run() {
       res.send(result);
     });
 
+    app.patch('/users/admin/:id',async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $set:{
+          role: 'admin'
+        }
+      }
+      const result = await usersCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       user.role = "student";
@@ -64,6 +77,29 @@ async function run() {
       const classes = await classCollection.find({ instructorEmail }).toArray();
       res.json(classes);
     });
+
+    app.get('/singleClass/:id',async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await classCollection.findOne(query)
+      res.send(result)
+    })
+
+    app.patch('/updateClass/:id',async(req,res)=>{
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id)}
+      const updateClass = req.body;
+      const updateDoc = {
+        $set: {
+          name: updateClass.name,
+          image: updateClass.image,
+          price: updateClass.price,
+          availableSeats: updateClass.availableSeats
+        }
+      }
+      const result = await classCollection.updateOne(filter,updateDoc);
+      res.send(result)
+    })
 
     app.get("/approved", async (req, res) => {
       const result = await classCollection
