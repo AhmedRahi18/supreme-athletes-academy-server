@@ -71,17 +71,42 @@ async function run() {
     });
 
     app.get("/classes", async (req, res) => {
-      const result = await classCollection.find().toArray();
+      const result = await classCollection.find().sort({ createdAt: -1 }).toArray();
       res.send(result);
     });
-
+    
     app.post("/classes", async (req, res) => {
       const classes = req.body;
       classes.status = "pending";
       classes.enrolled = 0;
+      classes.createdAt = new Date();
       const result = await classCollection.insertOne(classes);
       res.send(result);
     });
+
+    app.patch('/classes/approve/:id',async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $set:{
+          status: 'Approved'
+        }
+      }
+      const result = await classCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+    app.patch('/classes/deny/:id',async(req,res)=>{
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const updatedDoc = {
+        $set:{
+          status: 'deny'
+        }
+      }
+      const result = await classCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
 
     app.get("/instructorClasses/:email", async (req, res) => {
       const instructorEmail = req.params.email;
