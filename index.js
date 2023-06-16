@@ -29,6 +29,7 @@ async function run() {
     const myClassCollection = client.db("academy").collection("myClasses");
     const usersCollection = client.db("academy").collection("users");
 
+
     app.get("/users", async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
@@ -105,6 +106,25 @@ async function run() {
         }
       }
       const result = await classCollection.updateOne(filter, updatedDoc);
+      res.send(result)
+    })
+
+    app.patch('/classes/feedback/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const message = req.body.message;
+      const result = await classCollection.updateOne(filter, {
+        $set: {
+          feedback: message
+        }
+      });
+      res.send(result);
+    });
+
+    app.get('/useRole/:email',async(req,res)=>{
+      const email = req.params.email;
+      const query = {email: email}
+      const result = await usersCollection.findOne(query)
       res.send(result)
     })
 
