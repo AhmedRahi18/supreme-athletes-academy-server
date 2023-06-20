@@ -177,17 +177,17 @@ async function run() {
 
     app.post("/myClasses", async (req, res) => {
       const query = req.body;
-      const existingRecordMyClass = await myClassCollection.findOne({
+      const existingRecordMyClasses = await myClassCollection.findOne({
         email: query.email,
         name: query.name,
       });
     
-      const existingRecordPayment = await paymentCollection.findOne({
+      const existingRecordPayments = await paymentCollection.findOne({
         email: query.email,
         name: query.name,
       });
     
-      if (existingRecordMyClass || existingRecordPayment) {
+      if (existingRecordMyClasses || existingRecordPayments) {
         return res.status(400).json({ error: "Email and name already exist in payment records." });
       }
     
