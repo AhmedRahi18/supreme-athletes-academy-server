@@ -263,7 +263,12 @@ app.post('/payments', async (req, res) => {
 });
 
   app.get('/payments',async(req,res)=>{
-    const result = await paymentCollection.find().sort({ date: -1 }).toArray()
+    const email = req.query.email;
+      if (!email) {
+        res.send([]);
+      }
+      const query = { email: email };
+    const result = await paymentCollection.find(query).sort({ date: -1 }).toArray()
     res.send(result)
   })
 
